@@ -1,0 +1,9 @@
+Hi {%nameOfRecipient%},
+If you wish to parse message coming from a website that states info like:
+Name: {%senderName%}
+E-Mail: {%senderEmail%}
+Comment: {%comment%}
+
+Thank You,
+Best Regards
+Admin
