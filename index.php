@@ -5,10 +5,10 @@ $requisicao = array(
 	"messages"=>array(
 			0=>array(
 				"id"=>"false_558399711150@c.us_3EB02CA3A26371A62F72",
-				"body"=>"Catarinense 
-				Próspera DC 
-				1u
-				Min 1,66",
+				"body"=>"Potiguar 
+				Flamengo HT/FT @1.72
+				Min @1.61
+				1U",
 				"fromMe"=>0,
 				"self"=>0,
 				"isForwarded"=>0,
