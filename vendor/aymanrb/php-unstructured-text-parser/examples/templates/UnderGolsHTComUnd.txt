@@ -1,0 +1,1 @@
+tip{%numero%}: under{%gols%}ht de{%partida%}@{%odd%}⚽️min{%oddmin%}⚽️{%campeonato%}⚽{%unidades%}

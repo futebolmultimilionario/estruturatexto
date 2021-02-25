@@ -1,0 +1,3 @@
+{%campeonato%}
+{%time%}dc ht{%espacos%}
+{%unidades%}u

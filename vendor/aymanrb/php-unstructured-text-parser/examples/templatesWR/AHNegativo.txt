@@ -1,0 +1,3 @@
+{%campeonato%}
+{%time%}-{%linhanegativa%}
+{%unidades%}u

@@ -1,0 +1,4 @@
+{%campeonato%}
+{%partida%}
+{%time%}ml{%espacos%}
+{%unidades%}u

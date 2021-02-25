@@ -1,0 +1,1 @@
+tip{%numero%}:{%time%}ah{%linha%}@{%odd%}⚽️min{%oddmin%}⚽️{%campeonato%}⚽
