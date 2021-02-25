@@ -1,0 +1,5 @@
+{
+    "require": {
+        "aymanrb/php-unstructured-text-parser": "^2.1"
+    }
+}
