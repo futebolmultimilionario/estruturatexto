@@ -64,7 +64,6 @@ function funcaoWR($mensagem){
 	$token = 'nijbp88m5fkl2w0r';
 	$APIurl = 'https://eu27.chat-api.com/instance194066/';
 	//file_get_contents($APIurl."sendMessage?token=".$token."&chatId=558393389126@c.us&body=".urlencode($textToParse));
-			file_get_contents($url);
 			ob_start();
 			var_dump($parseResults);
 			$input = ob_get_contents();
@@ -83,6 +82,7 @@ function funcaoWR($mensagem){
 			$message = construirAposta($linhaDB, $mercado, $parseResults["odd"], $parseResults["oddmin"]);
 			$bot_url    = "https://api.telegram.org/bot".$botToken;
 			$url = $bot_url."/sendMessage?chat_id=".$chat_id."&text=".urlencode($message);
+			file_get_contents($url);
 		}
 	}
 }
