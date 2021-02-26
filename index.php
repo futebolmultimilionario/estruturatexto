@@ -5,8 +5,8 @@ $update = file_get_contents("php://input");
 $requisicao = json_decode($update, TRUE);
 
 $funcaoTipster = array(
-	"5522997157745-1566406220@g.us" => "funcaoRegys",
-	"553195121104-1601482705@g.us" => "funcaoWR",
+	"558393389126@c.us" => "funcaoRegys",
+	"55839338912@c.us" => "funcaoWR",
 	"558182315715-1594862914@g.us" => "funcaoFagner",
 );
 
@@ -27,13 +27,9 @@ function funcaoRegys($mensagem){
 		$mercado = defineMercado($textToParse, $parseResults);
 		$linhaDB = procuraDB($parseResults, $mercado);
 		$parseResults["oddmin"] = calculaOddmin($parseResults["odd"]);
-		if(isset($linhaDB)){
-			$botToken = "1698766079:AAGdW6CR9PsXvQe7yxtlNPgYSoo143hzza8";
-			$chat_id = "-1001256582495";	
+		if(isset($linhaDB)){	
 			$message = construirAposta($linhaDB, $mercado, $parseResults["odd"], $parseResults["oddmin"]);
-			$bot_url    = "https://api.telegram.org/bot".$botToken;
-			$url = $bot_url."/sendMessage?chat_id=".$chat_id."&text=".urlencode($message);
-			file_get_contents($url);
+			enviaMensagem($message);
 		}
 	} else {
 		$parseResults = $parser->parseText($textToParse)->getParsedRawData();
@@ -41,13 +37,9 @@ function funcaoRegys($mensagem){
 			$mercado = defineMercado($textToParse, $parseResults);
 			$linhaDB = procuraDB($parseResults, $mercado);
 			$parseResults["oddmin"] = calculaOddmin($parseResults["odd"]);
-			if(isset($linhaDB)){
-			$botToken = "1698766079:AAGdW6CR9PsXvQe7yxtlNPgYSoo143hzza8";
-			$chat_id = "-1001256582495";	
+			if(isset($linhaDB)){	
 			$message = construirAposta($linhaDB, $mercado, $parseResults["odd"], $parseResults["oddmin"]);
-			$bot_url    = "https://api.telegram.org/bot".$botToken;
-			$url = $bot_url."/sendMessage?chat_id=".$chat_id."&text=".urlencode($message);
-			file_get_contents($url);
+			enviaMensagem($message);
 			}
 		}
 	}
@@ -76,7 +68,7 @@ function funcaoWR($mensagem){
 		$parseResults = $parser->parseText($textToParse)->getParsedRawData();
 	}
 	registraEstrutura($parseResults, "textoparametizado");
-	registraEstrutura(bin2hex($textToParse), "textonaoestruturado");
+	registraEstrutura($textToParse, "textonaoestruturado");
 	if((array_key_exists("time", $parseResults) || array_key_exists("partida", $parseResults)) && strpos($textToParse, "aposta") === false && strpos($textToParse, "live") === false){
 		$mercado = defineMercado($textToParse, $parseResults);
 		$linhaDB = procuraDB($parseResults, $mercado);
@@ -84,13 +76,9 @@ function funcaoWR($mensagem){
 			$parseResults["odd"] = calculaOdd($linhaDB, $mercado);
 		}
 		$parseResults["oddmin"] = calculaOddmin($parseResults["odd"]);
-		if(isset($linhaDB)){	
-			$botToken = "1698766079:AAGdW6CR9PsXvQe7yxtlNPgYSoo143hzza8";
-			$chat_id = "-1001256582495";
+		if(isset($linhaDB)){
 			$message = construirAposta($linhaDB, $mercado, $parseResults["odd"], $parseResults["oddmin"]);
-			$bot_url    = "https://api.telegram.org/bot".$botToken;
-			$url = $bot_url."/sendMessage?chat_id=".$chat_id."&text=".urlencode($message);
-			file_get_contents($url);
+			enviaMensagem($message);
 		}
 	}
 }
@@ -118,7 +106,7 @@ function defineMercado($mensagem, $parsedtext){
 		$mercado = str_replace(array("ht", "gols", "gol"),array("","",""),"Menos de ".$parsedtext["gols"])." gol(s) no 1º Tempo";
 	} else if(strpos($mensagem, "under") !== false){
 		$mercado = str_replace(array("gols", "gol"),array("",""),"Menos de ".$parsedtext["gols"])." gol(s) na Partida";
-	} else if((strpos($mensagem, "ah") !== false && strpos($mensagem, "ht") !== false) || array_key_exists("linhapositiva", $parsedtext) || array_key_exists("linhanegativa", $parsedtext)){
+	} else if((strpos($mensagem, "ah") !== false || array_key_exists("linhapositiva", $parsedtext) || array_key_exists("linhanegativa", $parsedtext)) && strpos($mensagem, "ht") !== false){
 		if(array_key_exists("linhapositiva", $parsedtext)){
 			$mercado = " - Handcap Asiático +".$parsedtext["linhapositiva"]." no 1º Tempo";
 		}else if(array_key_exists("linhanegativa", $parsedtext)){
@@ -168,10 +156,18 @@ function procuraDB($aposta, $mercado){
 		$mercadoBet = "betresultado";
 	}
 	if(isset($arrayDB) && ($arrayDB["hora"]<time()-360000 || $arrayDB[$mercadoBet] !== null)){ //Mudar diferença da hora!!!
-		$arrayDB = [];
+		unset($arrayDB);
 	}
 	if(isset($arrayDB)){
 		$arrayDB["partida"] = "";
+		$time1 = $arrayDB["time1"];
+		$time2 = $arrayDB["time2"];
+		if($mercadoBet == "betgols"){
+			$busca = "UPDATE tabelateste SET betgols='1' WHERE time1='$time1' and time2='$time2'";
+		} else if ($mercadoBet == "betresultado"){
+			$busca = "UPDATE tabelateste SET betresultado='1' WHERE time1='$time1' and time2='$time2'";
+		}
+		$resulta = pg_query($db_handle, $busca);
 		return $arrayDB;
 	}
 }
@@ -195,13 +191,21 @@ function calculaOddmin($apostaestruturada){
 	return $oddmin;
 }
 
+function enviaMensagem($message){
+	$botToken = "1698766079:AAGdW6CR9PsXvQe7yxtlNPgYSoo143hzza8";
+	$chat_id = "-1001256582495";
+	$bot_url    = "https://api.telegram.org/bot".$botToken;
+	$url = $bot_url."/sendMessage?chat_id=".$chat_id."&text=".urlencode($message);
+	file_get_contents($url);
+}
+
 function construirAposta($arrayDB, $mercado, $odd, $oddmin){
 	$mensagem = "⚠️ ".$arrayDB[$arrayDB[0]].$mercado."
 💰 1 unidade
 ⚽️ @".number_format($odd, 2)."
 ⚽ Mínimo @".number_format($oddmin, 2)."
 🏟️ ".$arrayDB["time1"]." x ".$arrayDB["time2"]."
-🏟️ ".$arrayDB["campeonato"]."
+🏟️".$arrayDB["campeonato"]."
 ".$arrayDB["link"];
 	return $mensagem;
 }
