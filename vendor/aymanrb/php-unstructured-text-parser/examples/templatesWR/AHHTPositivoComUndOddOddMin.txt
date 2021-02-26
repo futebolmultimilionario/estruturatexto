@@ -1,4 +1,0 @@
-{%campeonato%}
-{%time%}ha +{%linhapositiva%} ht @{%odd%}
-min {%oddmin%}
-{%unidades%}u
