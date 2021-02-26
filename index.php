@@ -79,6 +79,11 @@ function funcaoWR($mensagem){
 			$bot_url    = "https://api.telegram.org/bot".$botToken;
 			$url = $bot_url."/sendMessage?chat_id=".$chat_id."&text=".urlencode($message);
 			file_get_contents($url);
+			ob_start();
+			var_dump($message);
+			$input = ob_get_contents();
+			ob_end_clean();
+			file_put_contents('input_requests.log',$input.PHP_EOL,FILE_APPEND);
 		}
 	}
 }
@@ -193,7 +198,6 @@ function construirAposta($arrayDB, $mercado, $odd, $oddmin){
 ".$arrayDB["link"];
 	return $mensagem;
 }
-
 
 verificatipster($requisicao, $funcaoTipster);
 //print_r($funcaoTipster[$textToParse["messages"][0]["chatId"]]);
