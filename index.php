@@ -21,6 +21,7 @@ function funcaoRegys($mensagem){
 	$parser = new aymanrb\UnstructuredTextParser\TextParser('vendor/aymanrb/php-unstructured-text-parser/examples/templates');
 	//Mudar para diretório referente ao GitHub!!!!
 	$textToParse = preg_replace('/^[ \t]*[\r\n]+/m', '', strtolower($mensagem));
+
 	$parseResults = $parser->parseText($textToParse, true)->getParsedRawData();
 	if((array_key_exists("time", $parseResults) || array_key_exists("partida", $parseResults)) && strpos($textToParse, "aposta") === false){
 		$mercado = defineMercado($textToParse, $parseResults);
@@ -50,25 +51,32 @@ function funcaoRegys($mensagem){
 			}
 		}
 	}
+	
+	registraEstrutura($parseResults, "textoparametizado");
+	registraEstrutura($textToParse, "textonaoestruturado");
 }
 
+function registraEstrutura($parsedText, $arquivo){
+	ob_start();
+	var_dump($parsedText);
+	$input = ob_get_contents();
+	ob_end_clean();
+	file_put_contents($arquivo.".log",$input.PHP_EOL,FILE_APPEND);
+}
 function funcaoWR($mensagem){
 	$parser = new aymanrb\UnstructuredTextParser\TextParser('vendor/aymanrb/php-unstructured-text-parser/examples/templatesWR');
 	//Mudar para diretório referente ao GitHub!!!!
 	$textToParse = preg_replace("/^[ \t]*[\r\n]+/m", "", strtolower($mensagem));
+	$textohex = bin2hex($textToParse);
+	$textotransf = str_replace("0a", "0d0a", $textohex);
+	$textToParse = hex2bin($textotransf);
 	$parseResults = $parser->parseText($textToParse, true)->getParsedRawData();
 	if(array_key_exists("time", $parseResults) == false && array_key_exists("partida", $parseResults) == false){
 		echo "ok";
 		$parseResults = $parser->parseText($textToParse)->getParsedRawData();
 	}
-	$token = 'nijbp88m5fkl2w0r';
-	$APIurl = 'https://eu27.chat-api.com/instance194066/';
-	//file_get_contents($APIurl."sendMessage?token=".$token."&chatId=558393389126@c.us&body=".urlencode($textToParse));
-			ob_start();
-			var_dump($parseResults);
-			$input = ob_get_contents();
-			ob_end_clean();
-			file_put_contents('input_requests.log',$input.PHP_EOL,FILE_APPEND);
+	registraEstrutura($parseResults, "textoparametizado");
+	registraEstrutura(bin2hex($textToParse), "textonaoestruturado");
 	if((array_key_exists("time", $parseResults) || array_key_exists("partida", $parseResults)) && strpos($textToParse, "aposta") === false && strpos($textToParse, "live") === false){
 		$mercado = defineMercado($textToParse, $parseResults);
 		$linhaDB = procuraDB($parseResults, $mercado);
@@ -197,6 +205,7 @@ function construirAposta($arrayDB, $mercado, $odd, $oddmin){
 ".$arrayDB["link"];
 	return $mensagem;
 }
+
 
 verificatipster($requisicao, $funcaoTipster);
 //print_r($funcaoTipster[$textToParse["messages"][0]["chatId"]]);
