@@ -5,7 +5,7 @@ $update = file_get_contents("php://input");
 $requisicao = json_decode($update, TRUE);
 
 $funcaoTipster = array(
-	"5522997157745-1566406220@g.us" => "funcaoRegys",
+	"558393389126@c.us" => "funcaoRegys",
 	"553195121104-1601482705@g.us" => "funcaoWR",
 	"558182315715-1594862914@g.us" => "funcaoFagner",
 );
@@ -131,6 +131,7 @@ function procuraDB($aposta, $mercado){
 	$query = "SELECT * FROM tabelateste";
 	$resultado = pg_query($db_handle, $query);
 	$min = 15;
+	$min2 = 23;
 	while ($row = pg_fetch_assoc($resultado)){
 		if(array_key_exists("time", $aposta)){
 			if(levenshtein($aposta["time"], strtolower($row["time1"]), 1, 3, 3)<$min){
@@ -143,10 +144,10 @@ function procuraDB($aposta, $mercado){
 				$min = levenshtein($aposta["time"], strtolower($row["time2"]), 1, 3, 3);
 			}
 		} else if(array_key_exists("partida", $aposta)){
-			if(levenshtein($aposta["partida"], strtolower($row["time1"]."  ".$row["time2"]), 1, 3, 3)<$min){
+			if(levenshtein($aposta["partida"], strtolower($row["time1"]."  ".$row["time2"]), 1, 3, 3)<$min2){
 				$arrayDB = $row;
 				array_push($arrayDB, "partida");
-				$min = levenshtein($aposta["partida"], strtolower($row["time1"]."  ".$row["time2"]), 1, 3, 3);
+				$min2 = levenshtein($aposta["partida"], strtolower($row["time1"]."  ".$row["time2"]), 1, 3, 3);
 			}
 		}
 	}
