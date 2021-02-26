@@ -64,7 +64,12 @@ function funcaoWR($mensagem){
 	$token = 'nijbp88m5fkl2w0r';
 	$APIurl = 'https://eu27.chat-api.com/instance194066/';
 	//file_get_contents($APIurl."sendMessage?token=".$token."&chatId=558393389126@c.us&body=".urlencode($textToParse));
-	print_r($parseResults);
+			file_get_contents($url);
+			ob_start();
+			var_dump($parseResults);
+			$input = ob_get_contents();
+			ob_end_clean();
+			file_put_contents('input_requests.log',$input.PHP_EOL,FILE_APPEND);
 	if((array_key_exists("time", $parseResults) || array_key_exists("partida", $parseResults)) && strpos($textToParse, "aposta") === false && strpos($textToParse, "live") === false){
 		$mercado = defineMercado($textToParse, $parseResults);
 		$linhaDB = procuraDB($parseResults, $mercado);
@@ -78,12 +83,6 @@ function funcaoWR($mensagem){
 			$message = construirAposta($linhaDB, $mercado, $parseResults["odd"], $parseResults["oddmin"]);
 			$bot_url    = "https://api.telegram.org/bot".$botToken;
 			$url = $bot_url."/sendMessage?chat_id=".$chat_id."&text=".urlencode($message);
-			file_get_contents($url);
-			ob_start();
-			var_dump($message);
-			$input = ob_get_contents();
-			ob_end_clean();
-			file_put_contents('input_requests.log',$input.PHP_EOL,FILE_APPEND);
 		}
 	}
 }
