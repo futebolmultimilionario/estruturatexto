@@ -63,7 +63,7 @@ function funcaoWR($mensagem){
 	}
 	$token = 'nijbp88m5fkl2w0r';
 	$APIurl = 'https://eu27.chat-api.com/instance194066/';
-	file_get_contents($APIurl."sendMessage?token=".$token."&chatId=558393389126@c.us&body=".urlencode($textToParse));
+	//file_get_contents($APIurl."sendMessage?token=".$token."&chatId=558393389126@c.us&body=".urlencode($textToParse));
 	print_r($parseResults);
 	if((array_key_exists("time", $parseResults) || array_key_exists("partida", $parseResults)) && strpos($textToParse, "aposta") === false && strpos($textToParse, "live") === false){
 		$mercado = defineMercado($textToParse, $parseResults);
