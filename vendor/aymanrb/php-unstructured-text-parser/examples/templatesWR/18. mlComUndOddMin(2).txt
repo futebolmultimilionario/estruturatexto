@@ -1,0 +1,4 @@
+{%campeonato%}
+{%time%}ml
+min{%oddmin%}
+{%unidades%}u

@@ -1,0 +1,4 @@
+{%campeonato%}
+{%time%}dnb{%espacos%}
+{%unidades%}u
+min{%oddmin%}

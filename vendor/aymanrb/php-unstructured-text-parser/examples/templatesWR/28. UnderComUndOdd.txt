@@ -1,0 +1,4 @@
+{%campeonato%}
+{%partida%}
+under{%gols%}@{%odd%}
+{%unidades%}u

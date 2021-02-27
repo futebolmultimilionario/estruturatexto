@@ -1,0 +1,4 @@
+{%campeonato%}
+{%time%}htft
+{%unidades%}u
+min{%oddmin%}
