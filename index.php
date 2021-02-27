@@ -6,7 +6,7 @@ $requisicao = json_decode($update, TRUE);
 
 $funcaoTipster = array(
 	"5522997157745-1566406220@g.us" => "funcaoRegys",
-	"558393389126@c.us" => "funcaoWR",
+	"553195121104-1601482705@g.us" => "funcaoWR",
 	"558182315715-1594862914@g.us" => "funcaoFagner",
 );
 
