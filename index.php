@@ -84,7 +84,30 @@ function funcaoWR($mensagem){
 }
 
 function funcaoFagner($mensagem){
-	echo "Fagner";
+	$parser = new aymanrb\UnstructuredTextParser\TextParser('vendor/aymanrb/php-unstructured-text-parser/examples/templatesfagner');
+	//Mudar para diretório referente ao GitHub!!!!
+	$textToParse = preg_replace("/^[ \t]*[\r\n]+/m", "", strtolower($mensagem));
+	$parseResults = $parser->parseText($textToParse, true)->getParsedRawData();
+	print_r($parseResults);
+	registraEstrutura($parseResults, "textoparametizado");
+	registraEstrutura($textToParse, "textonaoestruturado");
+	if(array_key_exists("time", $parseResults) == false && array_key_exists("partida", $parseResults) == false){
+		echo "<br>Nao especifica<br>";
+		$parseResults = $parser->parseText($textToParse)->getParsedRawData();
+	}
+	print_r($parseResults);
+	if((array_key_exists("time", $parseResults) || array_key_exists("partida", $parseResults)) && strpos($textToParse, "aposta") === false && strpos($textToParse, "live") === false){
+		$mercado = defineMercado($textToParse, $parseResults);
+		$linhaDB = procuraDB($parseResults, $mercado);
+		if(array_key_exists("odd", $parseResults) == false || is_numeric($parseResults["odd"]) == false){
+			$parseResults["odd"] = calculaOdd($linhaDB, $mercado);
+		}
+		$parseResults["oddmin"] = calculaOddmin($parseResults["odd"]);
+		if(isset($linhaDB)){
+			$message = construirAposta($linhaDB, $mercado, $parseResults["odd"], $parseResults["oddmin"]);
+			enviaMensagem($message);
+		}
+	}
 }
 
 function defineMercado($mensagem, $parsedtext){
@@ -98,13 +121,13 @@ function defineMercado($mensagem, $parsedtext){
 		$mercado = " ou Empate";
 	} else if(strpos($mensagem, "htft") !== false || strpos($mensagem, "ht/ft") !== false){
 		$mercado = " - Intervalo/Final do Jogo";
-	} else if(strpos($mensagem, "over") !== false && strpos($mensagem, "ht") !== false){
+	} else if((strpos($mensagem, "over") !== false || strpos($mensagem, "ais de") !== false) && strpos($mensagem, "ht") !== false){
 		$mercado = str_replace(array("ht", "gols", "gol"),array("","",""),"Mais de ".$parsedtext["gols"])." gol(s) no 1º Tempo";
-	} else if(strpos($mensagem, "over") !== false){
+	} else if(strpos($mensagem, "over") !== false || strpos($mensagem, "ais de") !== false){
 		$mercado = str_replace(array("gols", "gol"),array("",""),"Mais de ".$parsedtext["gols"])." gol(s) na Partida";
-	} else if(strpos($mensagem, "under") !== false && strpos($mensagem, "ht") !== false){
+	} else if((strpos($mensagem, "under") !== false || strpos($mensagem, "enos de") !== false) && strpos($mensagem, "ht") !== false){
 		$mercado = str_replace(array("ht", "gols", "gol"),array("","",""),"Menos de ".$parsedtext["gols"])." gol(s) no 1º Tempo";
-	} else if(strpos($mensagem, "under") !== false){
+	} else if(strpos($mensagem, "under") !== false || strpos($mensagem, "enos de") !== false){
 		$mercado = str_replace(array("gols", "gol"),array("",""),"Menos de ".$parsedtext["gols"])." gol(s) na Partida";
 	} else if((strpos($mensagem, "ah") !== false || array_key_exists("linhapositiva", $parsedtext) || array_key_exists("linhanegativa", $parsedtext)) && strpos($mensagem, "ht") !== false){
 		if(array_key_exists("linhapositiva", $parsedtext)){
@@ -156,7 +179,7 @@ function procuraDB($aposta, $mercado){
 	} else {
 		$mercadoBet = "betresultado";
 	}
-	if(isset($arrayDB) && ($arrayDB["hora"]<time()-360000 || $arrayDB[$mercadoBet] !== null)){ //Mudar diferença da hora!!!
+	if(isset($arrayDB) && ($arrayDB["hora"]<time()-360000 || $arrayDB[$mercadoBet] == "t")){ //Mudar diferença da hora!!!
 		unset($arrayDB);
 	}
 	if(isset($arrayDB)){
@@ -213,5 +236,4 @@ function construirAposta($arrayDB, $mercado, $odd, $oddmin){
 
 
 verificatipster($requisicao, $funcaoTipster);
-//print_r($funcaoTipster[$textToParse["messages"][0]["chatId"]]);
 ?>
