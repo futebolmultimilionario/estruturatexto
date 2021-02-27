@@ -1,4 +1,0 @@
-{%campeonato%}
-{%time%}dc ht{%espacos%}
-{%unidades%}u
-min{%oddmin%}

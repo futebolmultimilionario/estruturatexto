@@ -1,3 +1,0 @@
-{%campeonato%}
-{%time%}ht/ft{%espacos%}@{%odd%}
-{%unidades%}u

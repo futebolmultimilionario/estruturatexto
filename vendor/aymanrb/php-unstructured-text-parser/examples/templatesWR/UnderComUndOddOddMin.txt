@@ -1,5 +1,0 @@
-{%campeonato%}
-{%partida%}
-under{%gols%}@{%odd%}
-{%unidades%}u
-min {%oddmin%}

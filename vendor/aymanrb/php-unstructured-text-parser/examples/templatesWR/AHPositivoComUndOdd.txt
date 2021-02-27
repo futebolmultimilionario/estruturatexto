@@ -1,3 +1,0 @@
-{%campeonato%}
-{%time%}+{%linhapositiva%}@{%odd%}
-{%unidades%}u
