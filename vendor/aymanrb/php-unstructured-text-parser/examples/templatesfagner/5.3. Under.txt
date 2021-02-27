@@ -1,0 +1,1 @@
+{%partida%}- menos de{%gols%}gols - @{%odd%}-{%unidades%}u
