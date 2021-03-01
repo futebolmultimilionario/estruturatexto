@@ -216,7 +216,7 @@ function calculaOddmin($apostaestruturada){
 }
 
 function enviaMensagem($message){
-	$botToken = "1698766079:AAH4B40TdnjjpwYkUaASIPlFitTmITgxkvE";
+	$botToken = "1698766079:AAH05x-2VNfTvY_S16NCosUtrJw0ZCVEoO4";
 	$chat_id = "-1001256582495";
 	$bot_url    = "https://api.telegram.org/bot".$botToken;
 	$url = $bot_url."/sendMessage?chat_id=".$chat_id."&text=".urlencode($message);
