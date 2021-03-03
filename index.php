@@ -179,7 +179,7 @@ function procuraDB($aposta, $mercado){
 	} else {
 		$mercadoBet = "betresultado";
 	}
-	if(isset($arrayDB) && ($arrayDB["hora"]<time()-360000 || $arrayDB[$mercadoBet] == "t")){ //Mudar diferença da hora!!!
+	if(isset($arrayDB) && ($arrayDB["hora"]<time()-600 || $arrayDB[$mercadoBet] == "t")){ //Mudar diferença da hora!!!
 		unset($arrayDB);
 	}
 	if(isset($arrayDB)){
