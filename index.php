@@ -3,7 +3,6 @@ include_once __DIR__ . '/vendor/autoload.php';
 $update = file_get_contents("php://input");
 
 $requisicao = json_decode($update, TRUE);
-
 $funcaoTipster = array(
 	"5522997157745-1566406220@g.us" => "funcaoRegys",
 	"553195121104-1601482705@g.us" => "funcaoWR",
@@ -27,8 +26,9 @@ function funcaoRegys($mensagem){
 		$mercado = defineMercado($textToParse, $parseResults);
 		$linhaDB = procuraDB($parseResults, $mercado);
 		$parseResults["oddmin"] = calculaOddmin($parseResults["odd"]);
-		if(isset($linhaDB)){	
-			$message = construirAposta($linhaDB, $mercado, $parseResults["odd"], $parseResults["oddmin"]);
+		if(isset($linhaDB)){
+			$unidades = calculaUnidade($parseResults, $parseResults["odd"]);	
+			$message = construirAposta($linhaDB, $mercado, $parseResults["odd"], $parseResults["oddmin"], $unidades);
 			enviaMensagem($message);
 		}
 	} else {
@@ -37,8 +37,9 @@ function funcaoRegys($mensagem){
 			$mercado = defineMercado($textToParse, $parseResults);
 			$linhaDB = procuraDB($parseResults, $mercado);
 			$parseResults["oddmin"] = calculaOddmin($parseResults["odd"]);
-			if(isset($linhaDB)){	
-			$message = construirAposta($linhaDB, $mercado, $parseResults["odd"], $parseResults["oddmin"]);
+			if(isset($linhaDB)){
+			$unidades = calculaUnidade($parseResults, $parseResults["odd"]);	
+			$message = construirAposta($linhaDB, $mercado, $parseResults["odd"], $parseResults["oddmin"], $unidades);
 			enviaMensagem($message);
 			}
 		}
@@ -77,7 +78,8 @@ function funcaoWR($mensagem){
 		}
 		$parseResults["oddmin"] = calculaOddmin($parseResults["odd"]);
 		if(isset($linhaDB)){
-			$message = construirAposta($linhaDB, $mercado, $parseResults["odd"], $parseResults["oddmin"]);
+			$unidades = calculaUnidade($parseResults, $parseResults["odd"]);
+			$message = construirAposta($linhaDB, $mercado, $parseResults["odd"], $parseResults["oddmin"], $unidades);
 			enviaMensagem($message);
 		}
 	}
@@ -104,7 +106,8 @@ function funcaoFagner($mensagem){
 		}
 		$parseResults["oddmin"] = calculaOddmin($parseResults["odd"]);
 		if(isset($linhaDB)){
-			$message = construirAposta($linhaDB, $mercado, $parseResults["odd"], $parseResults["oddmin"]);
+			$unidades = calculaUnidade($parseResults, $parseResults["odd"]);
+			$message = construirAposta($linhaDB, $mercado, $parseResults["odd"], $parseResults["oddmin"], $unidades);
 			enviaMensagem($message);
 		}
 	}
@@ -216,16 +219,31 @@ function calculaOddmin($apostaestruturada){
 }
 
 function enviaMensagem($message){
-	$botToken = "1698766079:AAH05x-2VNfTvY_S16NCosUtrJw0ZCVEoO4";
+	$botToken = "1698766079:AAHhiOkKbYl7IXOQ2TYxDlJqiBw1hRx9rJg";
 	$chat_id = "-1001256582495";
 	$bot_url    = "https://api.telegram.org/bot".$botToken;
 	$url = $bot_url."/sendMessage?chat_id=".$chat_id."&text=".urlencode($message);
 	file_get_contents($url);
 }
 
-function construirAposta($arrayDB, $mercado, $odd, $oddmin){
+function calculaUnidade($arrayDB, $odd){
+	if(rand(1, 10)<=7 && array_key_exists("unidades", $arrayDB)){
+		$unidade = $arrayDB["unidades"];
+	} else {
+		if($odd <= 2.2){
+			$unidade = 1;
+		} else if($odd <= 3){
+			$unidade = 0.5;
+		} else {
+			$unidade = 0.2;
+		}
+	}
+	return $unidade;
+}
+
+function construirAposta($arrayDB, $mercado, $odd, $oddmin, $unidades){
 	$mensagem = "⚠️ ".$arrayDB[$arrayDB[0]].$mercado."
-💰 1 unidade
+💰 ".number_format($unidades, 1)." unidade
 ⚽️ @".number_format($odd, 2)."
 ⚽ Mínimo @".number_format($oddmin, 2)."
 🏟️ ".$arrayDB["time1"]." x ".$arrayDB["time2"]."
