@@ -182,6 +182,13 @@ function procuraDB($aposta, $mercado){
 	} else {
 		$mercadoBet = "betresultado";
 	}
+	if(array_key_exists("link", $arrayDB)){
+		global $mensagem;
+		$arrayGrupos = array("5522997157745-1566406220@g.us"=>"558393389126-1611500813@g.us",
+                         "553195121104-1601482705@g.us"=>"558393389126-1611500858@g.us",
+                         "558182315715-1594862914@g.us"=>"558393389126-1611500920@g.us");
+		file_get_contents("https://eu27.chat-api.com/instance194066/sendMessage?token=nijbp88m5fkl2w0r&chatId=".$arrayGrupos[$mensagem["messages"][0]["chatId"]]."&body=".urlencode($arrayDB["link"]));
+	}
 	if(isset($arrayDB) && ($arrayDB["hora"]<time()-600 || $arrayDB[$mercadoBet] == "t")){ //Mudar diferença da hora!!!
 		unset($arrayDB);
 	}
