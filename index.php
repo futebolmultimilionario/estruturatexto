@@ -5,7 +5,7 @@ $update = file_get_contents("php://input");
 $requisicao = json_decode($update, TRUE);
 $funcaoTipster = array(
 	"5522997157745-1566406220@g.us" => "funcaoRegys",
-	"558393389126@c.us" => "funcaoWR",
+	"553195121104-1601482705@g.us" => "funcaoWR",
 	"558182315715-1594862914@g.us" => "funcaoFagner",
 );
 
@@ -184,7 +184,7 @@ function procuraDB($aposta, $mercado){
 	}
 	if(array_key_exists("link", $arrayDB)){
 		global $requisicao;
-		$arrayGrupos = array("558393389126@c.us"=>"558399711150@c.us",
+		$arrayGrupos = array("5522997157745-1566406220@g.us"=>"558393389126-1611500813@g.us",
                          "553195121104-1601482705@g.us"=>"558393389126-1611500858@g.us",
                          "558182315715-1594862914@g.us"=>"558393389126-1611500920@g.us");
 		file_get_contents("https://eu27.chat-api.com/instance194066/sendMessage?token=nijbp88m5fkl2w0r&chatId=".$arrayGrupos[$requisicao["messages"][0]["chatId"]]."&body=".urlencode($arrayDB["link"]));
